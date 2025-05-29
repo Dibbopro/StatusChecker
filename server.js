@@ -1,35 +1,36 @@
-const express = require('express');
-const whois = require('whois-json');
-const util = require('minecraft-server-util');
-const cors = require('cors');
+const express = require("express");
+const whois = require("whois-json");
+const util = require("minecraft-server-util");
+const cors = require("cors");
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.static('public'));
 
-app.get('/api/check', async (req, res) => {
-    const { ip } = req.query;
+app.get("/api/check", async (req, res) => {
+  const { ip } = req.query;
+  if (!ip) return res.status(400).json({ error: "Missing IP or domain." });
 
-    if (!ip) return res.status(400).json({ error: 'IP is required' });
+  try {
+    // WHOIS Lookup
+    const whoisData = await whois(ip);
 
+    // Minecraft Server Status
+    let mcData = { online: false };
     try {
-        let whoisData = await whois(ip);
-
-        let mcData = null;
-        try {
-            mcData = await util.status(ip);
-        } catch (err) {
-            mcData = { online: false, error: err.message };
-        }
-
-        res.json({
-            whois: whoisData,
-            minecraft: mcData
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Error retrieving info', details: error.message });
+      const result = await util.status(ip, { port: 25565, timeout: 3000 });
+      mcData = { ...result, online: true };
+    } catch (err) {
+      mcData = { online: false, error: "Not a Minecraft server or offline" };
     }
+
+    res.json({ whois: whoisData, minecraft: mcData });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error", detail: error.message });
+  }
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
