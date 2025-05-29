@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IP Minecraft Lookup</title>
+  <script defer src="script.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-3xl font-bold mb-4">Minecraft IP & WHOIS Checker</h1>
+  <input id="ipInput" type="text" placeholder="Enter IP or domain..."
+    class="p-2 w-full max-w-md rounded text-black" />
+  <button onclick="lookup()" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded">Check</button>
+
+  <div id="results" class="mt-6 w-full max-w-3xl bg-gray-800 p-4 rounded shadow-lg"></div>
+</body>
+</html>
