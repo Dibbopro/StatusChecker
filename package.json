@@ -1,5 +1,5 @@
 {
-  "name": "minecraft-api-backend",
+  "name": "StatusChecker",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
