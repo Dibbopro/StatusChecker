@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minecraft & WHOIS Lookup</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+    input, button { padding: 10px; font-size: 16px; }
+    .result { background: #fff; padding: 20px; margin-top: 20px; border-radius: 8px; }
+    pre { background: #eee; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>Minecraft & WHOIS Lookup</h1>
+  <input type="text" id="ipInput" placeholder="Enter IP or domain" />
+  <button onclick="lookup()">Lookup</button>
+  <div id="result" class="result" style="display:none;"></div>
+
+  <script>
+    async function lookup() {
+      const ip = document.getElementById('ipInput').value;
+      const resDiv = document.getElementById('result');
+
+      resDiv.innerHTML = 'Loading...';
+      resDiv.style.display = "block";
+
+      try {
+        const response = await fetch(`/api/check?ip=${ip}`);
+        const data = await response.json();
+
+        if (data.error) throw new Error(data.error);
+
+        resDiv.innerHTML = `
+          <h2>WHOIS</h2>
+          <pre>${JSON.stringify(data.whois, null, 2)}</pre>
+          <h2>Minecraft Server Info</h2>
+          <pre>${JSON.stringify(data.minecraft, null, 2)}</pre>
+        `;
+      } catch (err) {
+        resDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
